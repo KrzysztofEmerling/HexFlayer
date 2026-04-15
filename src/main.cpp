@@ -1,31 +1,33 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <ctype.h>
-#include "components/board.h"
+#include <cstdio>
+#include <cstring>
+#include <cctype>
+
+#include "components/board.hpp"
+#include "components/config.hpp"
 
 int main() 
 {
-    int n = 11; 
+    GameState game;
+    GameHistory history{};
 
-    GameState* game = game_create(n);
-    GameHistory history = {0};
-
-    while (1) 
+    while (true) 
     {
-        board_draw(game->board);
+        game.board->draw();
 
-        Player p = game->current_player;
+        Player p = game.current_player;
+
         printf("Gracz %s (np. A3, u=cofnij): ",
-            (p == BLACK) ? "BLACK (O)" : "WHITE (@)");
+            (p == Player::BLACK) ? "(O) połącz: NS" : "(@) połącz: WE");
 
         char input[16];
         if (!fgets(input, sizeof(input), stdin))
             break;
+
         input[strcspn(input, "\n")] = 0;
+
         if (strcmp(input, "u") == 0) {
             if (history.size > 0) {
-                game_undo(game, &history);
+                game.undo(history);
             } else {
                 printf("Brak ruchów do cofnięcia!\n");
             }
@@ -33,39 +35,43 @@ int main()
         }
 
         if (strlen(input) < 2) {
-            printf("Podaj ruch w formacie 'A1'");
+            printf("Podaj ruch w formacie 'A1'\n");
             continue;
         }
+
         char col_char = toupper(input[0]);
-        if (col_char < 'A' || col_char >= 'A' + game->board->n) {
+        if (col_char < 'A' || col_char >= 'A' + BOARD_SIZE) {
             printf("Niepoprawna kolumna!\n");
             continue;
         }
+
         int c = col_char - 'A';
+
         int r;
         if (sscanf(input + 1, "%d", &r) != 1) {
             printf("Niepoprawny wiersz!\n");
             continue;
         }
 
-        if (r < 0 || r >= game->board->n) {
+        if (r < 0 || r >= BOARD_SIZE) {
             printf("Wiersz poza planszą!\n");
             continue;
         }
-        if (!game_make_move(game, &history, r, c)) {
+
+        // MOVE
+        if (!game.make_move(history, r, c)) {
             printf("Niepoprawny ruch!\n");
             continue;
         }
 
-
-        if (board_check_win(game->board, p)) {
-            board_draw(game->board);
-            printf("WYGRYWA %s!\n",
-                (p == BLACK) ? "BLACK (O)" : "WHITE (@)");
+        // WIN CHECK
+        if (game.board->check_win(p)) {
+            game.board->draw();
+            printf("Wygrywa %s!\n",
+                (p == Player::BLACK) ? "(O)" : "(@)");
             break;
         }
     }
 
-    game_free(game);
     return 0;
 }
