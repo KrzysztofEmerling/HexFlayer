@@ -69,7 +69,9 @@ class GameState {
 public:
     BoardState* board;
     Player current_player;
+
     GameState& operator=(GameState&& other);
+    
     GameState();
     
     GameState(const SerializedState &state);

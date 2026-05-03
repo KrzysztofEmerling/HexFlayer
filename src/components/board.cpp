@@ -3,9 +3,6 @@
 #include <cassert>
 #include <cstring>
 
-#include <iostream>
-
-
 constexpr int dr[6] = {-1, -1, 0, 0, 1, 1};
 constexpr int dc[6] = {0, 1, -1, 1, -1, 0};
 
@@ -59,8 +56,6 @@ BoardState::~BoardState() {
 }
 
 void BoardState::rebuildDsu() {
-    this->draw();
-
     for (int block = 0; block < 3; block++)
     {
         uint64_t bits = black_bits[block];
@@ -73,9 +68,6 @@ void BoardState::rebuildDsu() {
             int id = block * 64 + local;     
             int r = id / BOARD_SIZE;
             int c = id % BOARD_SIZE;
-
-            printf("Processing BLACK id=%d (r=%d,c=%d)\n", id, r, c);
-            if (!in_bounds(r,c)) { printf("OUT OF BOUNDS!\n"); continue; }
 
             for (int k = 0; k < 6; k++) {
                 int nr = r + dr[k];
@@ -114,8 +106,6 @@ void BoardState::rebuildDsu() {
             int r = id / BOARD_SIZE;
             int c = id % BOARD_SIZE;
 
-            printf("Processing WHITE id=%d (r=%d,c=%d)\n", id, r, c);
-            if (!in_bounds(r,c)) { printf("OUT OF BOUNDS!\n"); continue; }
             for (int k = 0; k < 6; k++) {
                 int nr = r + dr[k];
                 int nc = c + dc[k];
@@ -138,8 +128,6 @@ void BoardState::rebuildDsu() {
             }
         }
     }
-    this->draw();
-
 }
 
 
