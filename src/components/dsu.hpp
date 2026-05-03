@@ -18,9 +18,12 @@ public:
     ~DSU();
 
     int find(int x);
+    int find_compress(int x);
 
     void unite(int a, int b,
                DSUChange* changes, int& changes_size);
+    void unite_compress(int a, int b);
+    
 
     bool connected(int a, int b);
 

@@ -21,6 +21,12 @@ int DSU::find(int x) {
         x = parent[x];
     return x;
 }
+int DSU::find_compress(int x) {
+    if (parent[x] != x) {
+        parent[x] = find_compress(parent[x]);
+    }
+    return parent[x];
+}
 
 void DSU::save(int node, DSUChange* changes, int& changes_size) {
     DSUChange c;
@@ -31,8 +37,7 @@ void DSU::save(int node, DSUChange* changes, int& changes_size) {
     changes[changes_size++] = c;
 }
 
-void DSU::unite(int a, int b,
-                DSUChange* changes, int& changes_size) {
+void DSU::unite(int a, int b, DSUChange* changes, int& changes_size) {
 
     int rootA = find(a);
     int rootB = find(b);
@@ -54,6 +59,26 @@ void DSU::unite(int a, int b,
         rank[rootA]++;
     }
 }
+void DSU::unite_compress(int a, int b) {
+    int rootA = find_compress(a);
+    int rootB = find_compress(b);
+
+    if (rootA == rootB)
+        return;
+
+    if (rank[rootA] < rank[rootB]) {
+        int tmp = rootA;
+        rootA = rootB;
+        rootB = tmp;
+    }
+
+    parent[rootB] = rootA;
+
+    if (rank[rootA] == rank[rootB]) {
+        rank[rootA]++;
+    }
+}
+
 
 bool DSU::connected(int a, int b) {
     return find(a) == find(b);

@@ -30,6 +30,19 @@ struct GameHistory {
     int changes_size = 0;
 };
 
+struct SerializedState {
+    uint64_t black_bits[3];
+    uint64_t white_bits[3];
+    Player current_player;
+};
+
+
+static inline bool getBit(const uint64_t bits[3], int idx) {
+    int bb = idx / 64;
+    int i = idx % 64;
+    return (bits[bb] >> i) & 1ULL;
+}
+ 
 class BoardState {
 public:
     uint64_t black_bits[3]{};
@@ -37,28 +50,34 @@ public:
 
     DSU* dsu_black;
     DSU* dsu_white;
-
-
     int N, S, W, E;
 
     BoardState();
+    BoardState(const uint64_t (&black)[3], const uint64_t (&white)[3]);
+
     ~BoardState();
 
     Player at(int r, int c) const;
+    bool check_win(Player p);
     void draw() const;
 
-    bool check_win(Player p);
+private:
+    void rebuildDsu();
 };
 
 class GameState {
 public:
     BoardState* board;
     Player current_player;
-
+    GameState& operator=(GameState&& other);
     GameState();
+    
+    GameState(const SerializedState &state);
     ~GameState();
 
     bool make_move(GameHistory& h, int r, int c);
     void make_fast_move(GameHistory& h, int r, int c);
     void undo(GameHistory& h);
+
+    SerializedState Serialize();
 };

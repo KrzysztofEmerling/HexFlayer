@@ -34,6 +34,15 @@ int main()
             continue;
         }
 
+        if (strcmp(input, "r") == 0) {
+            SerializedState state = game.Serialize();
+
+            game = GameState(state); 
+            history.size = 0;
+
+            continue;
+        }
+
         if (strlen(input) < 2) {
             printf("Podaj ruch w formacie 'A1'\n");
             continue;
