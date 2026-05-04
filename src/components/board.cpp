@@ -3,9 +3,6 @@
 #include <cassert>
 #include <cstring>
 
-constexpr int dr[6] = {-1, -1, 0, 0, 1, 1};
-constexpr int dc[6] = {0, 1, -1, 1, -1, 0};
-
 static BBIndex index_of(int r, int c) {
     int global = r * BOARD_SIZE + c;
     return { global / 64, global % 64 };
@@ -59,8 +56,6 @@ void BoardState::rebuildDsu() {
     for (int block = 0; block < 3; block++)
     {
         uint64_t bits = black_bits[block];
-        std::cout << "[" << block << "] " << bits << std::endl;
-
         while (bits)
         {
             int local = __builtin_ctzll(bits);   
@@ -95,8 +90,6 @@ void BoardState::rebuildDsu() {
     for (int block = 0; block < 3; block++)
     {
         uint64_t bits = white_bits[block];
-        std::cout << "[" << block << "] " << bits << std::endl;
-
         while (bits) 
         {
             int local = __builtin_ctzll(bits);   
@@ -129,8 +122,6 @@ void BoardState::rebuildDsu() {
         }
     }
 }
-
-
 
 Player BoardState::at(int r, int c) const {
     BBIndex idx = index_of(r, c);

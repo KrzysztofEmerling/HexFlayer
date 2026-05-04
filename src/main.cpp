@@ -1,84 +1,44 @@
 #include <cstdio>
-#include <cstring>
-#include <cctype>
-
 #include "components/board.hpp"
 #include "components/config.hpp"
+#include "components/MCTS.hpp"
 
 int main() 
 {
     GameState game;
     GameHistory history{};
 
+    MCTS ai_black(50000, 1.5f, 1.0f);
+    MCTS ai_white(50000, 1.5f, 1.0f);
+
     while (true) 
     {
         game.board->draw();
 
+        SerializedState state = game.Serialize();
         Player p = game.current_player;
 
-        printf("Gracz %s (np. A3, u=cofnij): ",
-            (p == Player::BLACK) ? "(O) połącz: NS" : "(@) połącz: WE");
+        if (p == Player::BLACK) {
+            printf("AI (O) ruch...\n");
+            MCTSMove mv = ai_black.run(state);
+            game.make_move(history, mv.r, mv.c);
 
-        char input[16];
-        if (!fgets(input, sizeof(input), stdin))
-            break;
-
-        input[strcspn(input, "\n")] = 0;
-
-        if (strcmp(input, "u") == 0) {
-            if (history.size > 0) {
-                game.undo(history);
-            } else {
-                printf("Brak ruchów do cofnięcia!\n");
+            if (game.board->check_win(Player::BLACK)) {
+                game.board->draw();
+                printf("Wygrywa (O)!\n");
+                break;
             }
-            continue;
         }
+        else {
+            printf("AI (@) ruch...\n");
+            MCTSMove mv = ai_white.run(state);
+            game.make_move(history, mv.r, mv.c);
 
-        if (strcmp(input, "r") == 0) {
-            SerializedState state = game.Serialize();
-
-            game = GameState(state); 
-            history.size = 0;
-
-            continue;
-        }
-
-        if (strlen(input) < 2) {
-            printf("Podaj ruch w formacie 'A1'\n");
-            continue;
-        }
-
-        char col_char = toupper(input[0]);
-        if (col_char < 'A' || col_char >= 'A' + BOARD_SIZE) {
-            printf("Niepoprawna kolumna!\n");
-            continue;
-        }
-
-        int c = col_char - 'A';
-
-        int r;
-        if (sscanf(input + 1, "%d", &r) != 1) {
-            printf("Niepoprawny wiersz!\n");
-            continue;
-        }
-
-        if (r < 0 || r >= BOARD_SIZE) {
-            printf("Wiersz poza planszą!\n");
-            continue;
-        }
-
-        // MOVE
-        if (!game.make_move(history, r, c)) {
-            printf("Niepoprawny ruch!\n");
-            continue;
-        }
-
-        // WIN CHECK
-        if (game.board->check_win(p)) {
-            game.board->draw();
-            printf("Wygrywa %s!\n",
-                (p == Player::BLACK) ? "(O)" : "(@)");
-            break;
+            if (game.board->check_win(Player::WHITE)) {
+                game.board->draw();
+                printf("Wygrywa (@)!\n");
+                break;
+            }
         }
     }
 

@@ -4,6 +4,7 @@
 #include "dsu.hpp"
 #include "config.hpp"
 
+
 struct BBIndex {
     int bb;
     int i;
@@ -20,6 +21,12 @@ struct Move {
     Player player;
     int snapshot_black;
     int snapshot_white;
+};
+
+struct NeighborList {
+    int count;
+    int r[6];
+    int c[6];
 };
 
 struct GameHistory {
