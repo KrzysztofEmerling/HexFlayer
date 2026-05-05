@@ -17,7 +17,7 @@ void generate_root_tasks(GameState& game, std::vector<Task>& tasks) {
     for (int r = 0; r < BOARD_SIZE; r++) {
         for (int c = 0; c < BOARD_SIZE; c++) {
 
-            if (!game.board->at(r,c) == Player::EMPTY)
+            if (!(game.board->at(r,c) == Player::EMPTY))
                 continue;
 
             game.make_fast_move(h, r, c);
@@ -111,7 +111,7 @@ void master_loop(int world_size) {
         int best_r = -1, best_c = -1;
 
         for (auto& r : results) {
-            float score = -r.Q; // zmiana perspektywy
+            float score = (game.current_player == Player::BLACK) ? r.Q : -r.Q;
 
             if (score > bestScore) {
                 bestScore = score;
@@ -120,8 +120,7 @@ void master_loop(int world_size) {
             }
         }
 
-        printf("Ruch: (%d,%d) score=%.4f\n",
-               best_r, best_c, bestScore);
+        printf("Ruch: (%d,%d) score=%.4f (perspektywa O)\n", best_r, best_c, bestScore);
 
         game.make_move(history, best_r, best_c);
 
