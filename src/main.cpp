@@ -17,7 +17,7 @@ void generate_root_tasks(GameState& game, std::vector<Task>& tasks) {
     for (int r = 0; r < BOARD_SIZE; r++) {
         for (int c = 0; c < BOARD_SIZE; c++) {
 
-            if (!game.board->isEmpty(r,c))
+            if (!game.board->at(r,c) == Player::EMPTY)
                 continue;
 
             game.make_fast_move(h, r, c);
