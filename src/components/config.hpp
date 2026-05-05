@@ -14,7 +14,7 @@ constexpr int MAX_CHANGES = 2048;
 //Ustawiania symulacji MCTS
 constexpr int MCTS_ITERS = 15000;
 constexpr float MCTS_C = 1.5f;
-constexpr float MCTS_TEMP = 0.95f;
+constexpr float MCTS_TEMP = 1.0f;
 
 //mpi
 constexpr int MASTER = 0;
