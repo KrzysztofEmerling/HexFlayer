@@ -225,7 +225,7 @@ MCTSNode* MCTS::select_with_temperature(MCTSNode* root) {
     return root->children[root->child_count - 1];
 }
 
-MCTSMove MCTS::run(SerializedState state) {
+MCTSResult MCTS::run(SerializedState state) {
     free_tree(root);
     root = create_node(nullptr, -1, -1);
 
@@ -258,6 +258,6 @@ MCTSMove MCTS::run(SerializedState state) {
     MCTSNode* best = select_with_temperature(root);
 
     if (best)
-        return MCTSMove(best->move_r, best->move_c);
-    return MCTSMove(-1, -1);
+        return MCTSResult(best->wins/best->visits ,best->move_r, best->move_c);
+    return MCTSResult(0.0f, -1, -1);
 }

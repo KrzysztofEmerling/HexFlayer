@@ -10,7 +10,7 @@ struct BBIndex {
     int i;
 };
 
-enum class Player {
+enum class Player : uint8_t {
     EMPTY = 0,
     BLACK = 1,
     WHITE = 2

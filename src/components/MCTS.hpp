@@ -20,7 +20,8 @@ struct MCTSNode {
     bool fully_expanded;
 };
 
-struct MCTSMove {
+struct MCTSResult{
+    float Q;
     int r, c;
 };
 
@@ -29,7 +30,7 @@ public:
     MCTS(int iterations, float c_puct = 1.5f, float temperature = 0.5f);
     ~MCTS();
 
-    MCTSMove run(SerializedState state);
+    MCTSResult run(SerializedState state);
 
 private:
     int iterations;
@@ -53,6 +54,5 @@ private:
     // heuristics
     float center_bias(int r, int c);
     int count_neighbors(const BoardState* b, int r, int c, Player p);
-    // float goal_bias(int r, int c, Player p);
 
 };
