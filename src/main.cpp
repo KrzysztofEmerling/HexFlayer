@@ -1,3 +1,5 @@
+// kąpilacja mpi // mpic++ -std=c++23 -Wall -Wextra src/main.cpp src/components/board.cpp src/components/dsu.cpp src/components/MCTS.cpp -I src -o HexFlayer
+
 #include <mpi.h>
 #include <vector>
 #include <cstdio>
