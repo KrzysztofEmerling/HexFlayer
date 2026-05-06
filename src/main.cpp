@@ -16,22 +16,22 @@ struct Task {
     int r, c;
 };
 
-void generate_root_tasks(GameState& game, std::vector<Task>& tasks) {
-    GameHistory h{};
+
+void generate_root_tasks(const SerializedState& state, std::vector<Task>& tasks) {
+    GameState game(state);
 
     for (int r = 0; r < BOARD_SIZE; r++) {
         for (int c = 0; c < BOARD_SIZE; c++) {
-
-            if (!(game.board->at(r,c) == Player::EMPTY))
+            if (game.board->at(r, c) != Player::EMPTY)
                 continue;
 
+            GameHistory h{};
             game.make_fast_move(h, r, c);
 
             Task t;
             t.state = game.Serialize();
             t.r = r;
             t.c = c;
-
             tasks.push_back(t);
 
             game.undo(h);
@@ -69,9 +69,9 @@ void master_loop(int world_size) {
     while (true) {
         game.board->draw();
 
-        // ===== generuj zadania =====
+        SerializedState current_state = game.Serialize();
         std::vector<Task> tasks;
-        generate_root_tasks(game, tasks);
+        generate_root_tasks(current_state, tasks);
 
         if (tasks.empty()) {
             printf("Brak ruchów\n");
@@ -133,7 +133,7 @@ void master_loop(int world_size) {
 
         printf("Ruch: (%d,%d)\n", best_r, best_c);
 
-        game.make_move(history, best_r, best_c);
+        game.make_move_fast(history, best_r, best_c);
 
         Player last =
             (game.current_player == Player::BLACK)
@@ -142,7 +142,7 @@ void master_loop(int world_size) {
         if (game.board->check_win(last)) {
             game.board->draw();
             printf("Wygrywa %s\n",
-                   last == Player::BLACK ? "BLACK" : "WHITE");
+                   last == Player::BLACK ? "@" : "O");
             break;
         }
     }
