@@ -12,7 +12,7 @@ constexpr int MAX_HISTORY = 512;
 constexpr int MAX_CHANGES = 2048;
 
 //Ustawiania symulacji MCTS
-constexpr int MCTS_ITERS = 50000;
+constexpr int MCTS_ITERS = 10000;
 constexpr float MCTS_C = 1.5f;
 constexpr float MCTS_TEMP = 1.0f;
 

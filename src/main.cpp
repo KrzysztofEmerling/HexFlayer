@@ -115,7 +115,7 @@ void master_loop(int world_size) {
         std::vector<std::pair<int,int>> bestMoves;
 
         for (auto& r : results) {
-            float score = (game.current_player == Player::BLACK) ? r.Q : -r.Q;
+            float score = -r.Q;
 
             if (score > bestScore) {
                 bestScore = score;
