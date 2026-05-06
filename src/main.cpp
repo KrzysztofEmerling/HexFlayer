@@ -112,19 +112,25 @@ void master_loop(int world_size) {
         }
 
         float bestScore = -1e9f;
-        int best_r = -1, best_c = -1;
+        std::vector<std::pair<int,int>> bestMoves;
 
         for (auto& r : results) {
             float score = (game.current_player == Player::BLACK) ? r.Q : -r.Q;
 
             if (score > bestScore) {
                 bestScore = score;
-                best_r = r.r;
-                best_c = r.c;
+                bestMoves.clear();
+                bestMoves.emplace_back(r.r, r.c);
+            }
+            else if (score == bestScore) {
+                bestMoves.emplace_back(r.r, r.c);
             }
         }
+        int idx = rand() % bestMoves.size();
+        int best_r = bestMoves[idx].first;
+        int best_c = bestMoves[idx].second;
 
-        printf("Ruch: (%d,%d) score=%.4f (perspektywa O)\n", best_r, best_c, bestScore);
+        printf("Ruch: (%d,%d)\n", best_r, best_c);
 
         game.make_move(history, best_r, best_c);
 
