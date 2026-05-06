@@ -4,6 +4,7 @@
 
 #include <mpi.h>
 #include <vector>
+#include <random>
 #include <cstdio>
 
 #include "components/board.hpp"
